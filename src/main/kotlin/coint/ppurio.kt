@@ -1,5 +1,13 @@
 package coint
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import com.google.gson.JsonParseException
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+
+
 private const val URL = "https://message.ppurio.com/api/send_utf8_json.php"
 
 /**
@@ -8,7 +16,24 @@ private const val URL = "https://message.ppurio.com/api/send_utf8_json.php"
  * @param phone (필수) 수신번호
  * @param msg (필수) 메시지 내용
  */
-fun send(userid: String, callback: String, phone: String, msg: String) {
+fun send(userid: String, callback: String, phone: String, msg: String): SendResult {
+    return send(URL, userid, callback, phone, msg)
+}
+
+private val client = OkHttpClient()
+private val gson = GsonBuilder().create();
+
+internal fun send(url: String, userid: String, callback: String, phone: String, msg: String): SendResult {
+    val form = FormBody.Builder()
+        .add("userid", userid)
+        .add("callback", callback)
+        .add("phone", phone)
+        .add("msg", msg)
+        .build()
+    val request = Request.Builder().url(url).post(form).build()
+    return client.newCall(request).execute().use { response ->
+        parseSendResult(response.body?.string() ?: "")
+    }
 }
 
 enum class SendResultType {
@@ -82,17 +107,28 @@ data class SendResult(
 }
 
 internal fun parseSendResult(raw: String): SendResult {
-    val values = raw.split('|')
-    if (values.count() != 4) {
-        return invalidSendResult(raw)
-    }
+    val json =
+        try {
+            gson.fromJson(raw, JsonObject::class.java)
+        } catch (e: JsonParseException) {
+            null
+        }
+            ?: return invalidSendResult(raw)
 
-    val (rawState, rawType, messageId, rawCount) = values;
-
-    val state = SendResultState.values().find { it.name == rawState.uppercase() } ?: return invalidSendResult(raw)
-    val type = SendResultType.values().find { it.name == rawType.uppercase() } ?: return invalidSendResult(raw)
-    val count = rawCount.toIntOrNull() ?: return invalidSendResult(raw)
+    val state = SendResultState.values()
+        .find { it.name == json.get("result")?.asString?.uppercase() }
+        ?: SendResultState.INVALID
+    val type = SendResultType.values().find { it.name == json.get("type")?.asString?.uppercase() }
+        ?: SendResultType.SMS
+    val messageId = json.get("msgid")?.asString ?: ""
+    val count = json.get("ok_cnt")?.asInt ?: 0
     return SendResult(raw, state, type, messageId, count)
 }
 
-private fun invalidSendResult(raw: String) = SendResult(raw, SendResultState.INVALID, SendResultType.SMS, "", 0)
+internal fun invalidSendResult(raw: String) = SendResult(raw, SendResultState.INVALID, SendResultType.SMS, "", 0)
+
+
+fun main(args: Array<String>) {
+    val result = send(userid = args[0], callback = args[1], phone = args[2], msg = args[3])
+    println("result = $result")
+}
