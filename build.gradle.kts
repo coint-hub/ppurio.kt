@@ -1,6 +1,12 @@
 plugins {
     kotlin("jvm") version "1.5.21"
+    `java-library`
     `maven-publish`
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 repositories {
