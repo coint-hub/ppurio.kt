@@ -1,6 +1,2 @@
 jdk:
-  - 6.0.119-zulu
-
-before_install:
-  - sdk install java 6.0.119-zulu
-  - sdk use java 6.0.119-zulu
+  - openjdk6
