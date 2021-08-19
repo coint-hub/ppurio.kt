@@ -4,8 +4,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
 
     withJavadocJar()
     withSourcesJar()
@@ -16,7 +16,8 @@ repositories {
 }
 
 dependencies {
-    val okHttp = "4.9.1"
+    // java 1.6 지원
+    val okHttp = "3.14.9"
     implementation("com.squareup.okhttp3:okhttp:$okHttp")
     implementation("com.google.code.gson:gson:2.8.7")
 

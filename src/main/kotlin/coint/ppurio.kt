@@ -32,7 +32,7 @@ internal fun send(url: String, userid: String, callback: String, phone: String, 
         .build()
     val request = Request.Builder().url(url).post(form).build()
     return client.newCall(request).execute().use { response ->
-        parseSendResult(response.body?.string() ?: "")
+        parseSendResult(response.body()?.string() ?: "")
     }
 }
 
