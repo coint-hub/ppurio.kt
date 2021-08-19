@@ -4,5 +4,5 @@ jdk:
 before_install:
   - source "$HOME/.sdkman/bin/sdkman-init.sh"
   - sdk update
-  - sdk install java 7.0.312-zulu
-  - sdk use java 7.0.312-zulu
+  - sdk install java 6.0.119-zulu
+  - sdk use java 6.0.119-zulu
