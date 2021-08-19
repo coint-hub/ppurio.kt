@@ -25,10 +25,10 @@ dependencies {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
-    sourceCompatibility = JavaVersion.VERSION_1_6.toString()
-    targetCompatibility = JavaVersion.VERSION_1_6.toString()
+    sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+    targetCompatibility = JavaVersion.VERSION_1_8.toString()
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_6.toString()
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
