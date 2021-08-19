@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     // java 1.6 지원
-    val okHttp = "3.14.9"
+    val okHttp = "3.12.13"
     implementation("com.squareup.okhttp3:okhttp:$okHttp")
     implementation("com.google.code.gson:gson:2.8.7")
 
